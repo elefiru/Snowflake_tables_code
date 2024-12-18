@@ -1,0 +1,20 @@
+-- AIMS_PIPELINECOMPONENT --
+
+SELECT
+    c.id as "id",
+    c.name_tag AS "component",
+    c.length as "length",
+    c.from_km as "from_km",
+    c.from_coord as "from_coord",
+    c.to_km as "to_km",
+    c.to_coord as "to_coord",
+    c.risk_calculation as "risk_calculation",
+    c.pipeline_id as "pipeline_id",
+    c.sections_id as "sections_id",
+    l.label AS "component_type"
+FROM
+    aims_pipelinecomponent c    
+LEFT JOIN
+    aims_list l ON l.id=c.sections_id;
+
+    

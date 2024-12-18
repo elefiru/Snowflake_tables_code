@@ -1,0 +1,168 @@
+-- AIMS_PIPELINECOMPONENT (FUT) --
+
+SELECT
+    c.id as "id",
+    c.name_tag AS "component",
+    c.length as "length",
+    c.from_km as "from_km",
+    c.from_coord as "from_coord",
+    c.to_km as "to_km",
+    c.to_coord as "to_coord",
+    c.risk_calculation as "risk_calculation",
+    c.pipeline_id "pipeline_id",
+    c.sections_id as "sections_id",
+    l.label AS "component_type",
+    p.id AS "aims_pipeline.id",
+    p.name AS "aims_pipeline.name",
+    e.id AS "aims_pipelineevent.id",
+    e.description AS "aims_pipelineevent.description",
+    e.date AS "aims_pipelineevent.date",
+    e.event_id AS "aims_pipelineevent.event_id",
+    a.id AS "aims_pipelineevent.aims_pipelineexternalriskassessment.id",
+    a.risk_assessment_type AS "aims_pipelineevent.aims_pipelineexternalriskassessment.risk_assessment_type",
+    g.risk_priority AS "aims_pipelineevent.aims_pipelineexternalriskassessment.aims_pipelineexternalri.1",
+    g.risk_consequence AS "aims_pipelineevent.aims_pipelineexternalriskassessment.aims_pipelineexternalri.2",
+    g.summary AS "aims_pipelineevent.aims_pipelineexternalriskassessment.aims_pipelineexternalri.3",
+    b.risk_assessment_type AS "aims_pipelineevent.aims_pipelineinternalriskassessment.risk_assessment_type",
+    h.id AS "aims_pipelineevent.aims_pipelineinternalriskassessment.aims_pipelineinternalri.1",
+    h.risk_priority AS "aims_pipelineevent.aims_pipelineinternalriskassessment.aims_pipelineinternalri.2",
+    h.risk_consequence AS "aims_pipelineevent.aims_pipelineinternalriskassessment.aims_pipelineinternalri.3",
+    h.summary AS "aims_pipelineevent.aims_pipelineinternalriskassessment.aims_pipelineinternalri.4",
+    h.due_date AS "aims_pipelineevent.aims_pipelineinternalriskassessment.aims_pipelineinternalri.5",
+    d.id AS "aims_pipelineinternalprobecouponlocation.id",
+    d.name_tag AS "aims_pipelineinternalprobecouponlocation.name_tag",
+    d.type AS "aims_pipelineinternalprobecouponlocation.type",
+    d.location AS "aims_pipelineinternalprobecouponlocation.location",
+    d.location_info AS "aims_pipelineinternalprobecouponlocation.location_info",
+    d.component_id AS "aims_pipelineinternalprobecouponlocation.component_id",
+    
+    CONCAT ("aims_pipelineevent.aims_pipelineexternalriskassessment.aims_pipelineexternalri.1",'',"aims_pipelineevent.aims_pipelineexternalriskassessment.aims_pipelineexternalri.2") AS "ExternalRisk",
+    
+    CONCAT ("aims_pipelineevent.aims_pipelineinternalriskassessment.aims_pipelineinternalri.2",'',"aims_pipelineevent.aims_pipelineinternalriskassessment.aims_pipelineinternalri.3") AS "IntRisk",
+
+    CASE 
+        WHEN "IntRisk" = 'A1' THEN 25
+        WHEN "IntRisk" = 'A2' THEN 24
+        WHEN "IntRisk" = 'A3' THEN 23
+        WHEN "IntRisk" = 'A4' THEN 17
+        WHEN "IntRisk" = 'A5' THEN 10
+        WHEN "IntRisk" = 'B1' THEN 22
+        WHEN "IntRisk" = 'B2' THEN 20
+        WHEN "IntRisk" = 'B3' THEN 18
+        WHEN "IntRisk" = 'B4' THEN 11
+        WHEN "IntRisk" = 'B5' THEN 9
+        WHEN "IntRisk" = 'C1' THEN 21
+        WHEN "IntRisk" = 'C2' THEN 19
+        WHEN "IntRisk" = 'C3' THEN 13
+        WHEN "IntRisk" = 'C4' THEN 12
+        WHEN "IntRisk" = 'C5' THEN 3
+        WHEN "IntRisk" = 'D1' THEN 16
+        WHEN "IntRisk" = 'D2' THEN 14
+        WHEN "IntRisk" = 'D3' THEN 7
+        WHEN "IntRisk" = 'D4' THEN 5
+        WHEN "IntRisk" = 'D5' THEN 2
+        WHEN "IntRisk" = 'E1' THEN 15
+        WHEN "IntRisk" = 'E2' THEN 8
+        WHEN "IntRisk" = 'E3' THEN 6
+        WHEN "IntRisk" = 'E4' THEN 4
+        WHEN "IntRisk" = 'E5' THEN 1
+        ELSE 0
+    END AS "IntRisk_Value",
+
+        CASE
+        WHEN "ExternalRisk" ='A1' THEN 25
+        WHEN "ExternalRisk" ='A2' THEN 24
+        WHEN "ExternalRisk" ='A3' THEN 23
+        WHEN "ExternalRisk" ='A4' THEN 17
+        WHEN "ExternalRisk" ='A5' THEN 10
+        WHEN "ExternalRisk" ='B1' THEN 22
+        WHEN "ExternalRisk" ='B2' THEN 20
+        WHEN "ExternalRisk" ='B3' THEN 18
+        WHEN "ExternalRisk" ='B4' THEN 11
+        WHEN "ExternalRisk" ='B5' THEN 9
+        WHEN "ExternalRisk" ='C1' THEN 21
+        WHEN "ExternalRisk" ='C2' THEN 19
+        WHEN "ExternalRisk" ='C3' THEN 13
+        WHEN "ExternalRisk" ='C4' THEN 12
+        WHEN "ExternalRisk" ='C5' THEN 3
+        WHEN "ExternalRisk" ='D1' THEN 16
+        WHEN "ExternalRisk" ='D2' THEN 14
+        WHEN "ExternalRisk" ='D3' THEN 7
+        WHEN "ExternalRisk" ='D4' THEN 5
+        WHEN "ExternalRisk" ='D5' THEN 2
+        WHEN "ExternalRisk" ='E1' THEN 15
+        WHEN "ExternalRisk" ='E2' THEN 8
+        WHEN "ExternalRisk" ='E3' THEN 6
+        WHEN "ExternalRisk" ='E4' THEN 4
+        WHEN "ExternalRisk" ='E5' THEN 1
+        ELSE 0
+    END AS "Ext_risk_value",
+
+    GREATEST("Ext_risk_value", "IntRisk_Value") AS "MaxRisk",
+
+    CASE 
+        WHEN "MaxRisk" >= 22 THEN 'Very High'
+        WHEN "MaxRisk" >= 17 THEN 'High'
+        WHEN "MaxRisk" >= 9 THEN 'Medium'
+        WHEN "MaxRisk" >= 1 THEN 'Low'
+        ELSE NULL
+    END AS "FRiskTag",
+
+    CONCAT("aims_pipelineevent.aims_pipelineexternalriskassessment.aims_pipelineexternalri.3",'   ',"aims_pipelineevent.aims_pipelineinternalriskassessment.aims_pipelineinternalri.4") AS "Action",
+
+
+    --p.Risk_Tag AS Actual_Risk,
+
+    p.overall_risk AS "Actual Risk matrix",
+
+    CASE 
+        WHEN "MaxRisk" = 25 THEN 'A1'
+        WHEN "MaxRisk" = 24 THEN 'A2'
+        WHEN "MaxRisk" = 23 THEN 'A3'
+        WHEN "MaxRisk" = 22 THEN 'B1'
+        WHEN "MaxRisk" = 21 THEN 'C1'
+        WHEN "MaxRisk" = 20 THEN 'B2'
+        WHEN "MaxRisk" = 19 THEN 'C2'
+        WHEN "MaxRisk" = 18 THEN 'B3'
+        WHEN "MaxRisk" = 17 THEN 'A4'
+        WHEN "MaxRisk" = 16 THEN 'D1'
+        WHEN "MaxRisk" = 15 THEN 'E1'
+        WHEN "MaxRisk" = 14 THEN 'D2'
+        WHEN "MaxRisk" = 13 THEN 'C3'
+        WHEN "MaxRisk" = 12 THEN 'C4'
+        WHEN "MaxRisk" = 11 THEN 'B4'
+        WHEN "MaxRisk" = 10 THEN 'A5'
+        WHEN "MaxRisk" = 9 THEN 'B5'
+        WHEN "MaxRisk" = 8 THEN 'E2'
+        WHEN "MaxRisk" = 7 THEN 'D3'
+        WHEN "MaxRisk" = 6 THEN 'E3'
+        WHEN "MaxRisk" = 5 THEN 'D4'
+        WHEN "MaxRisk" = 4 THEN 'E4'
+        WHEN "MaxRisk" = 3 THEN 'C5'
+        WHEN "MaxRisk" = 2 THEN 'D5'
+        WHEN "MaxRisk" = 1 THEN 'E5'
+        ELSE NULL
+    END AS "Fut Risk",
+
+        e.pipeline_id AS "aims_pipelineevent.pipeline_id"
+    
+FROM
+        aims_pipelinecomponent c    
+LEFT JOIN
+        aims_list l ON l.id=c.sections_id
+LEFT JOIN 
+        aims_pipeline p ON p.id = c.pipeline_id
+LEFT JOIN
+        aims_pipelineevent e ON e.component_id = c.id
+LEFT JOIN
+        aims_pipelineinternalprobecouponlocation d ON d.component_id = c.id
+LEFT JOIN
+        aims_pipelineexternalriskassessment a ON a.event_id = e.id
+LEFT JOIN
+        aims_pipelineexternalriskevaluation g ON g.risk_assessment_id = a.id 
+LEFT JOIN
+        aims_pipelineinternalriskassessment b ON b.event_id = e.id
+LEFT JOIN
+        aims_pipelineinternalriskevaluation h ON h.risk_assessment_id = b.id
+
+WHERE "component_type" = 'Pipe Future Risk (FFS & LTE)';

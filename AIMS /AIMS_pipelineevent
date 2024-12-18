@@ -1,0 +1,62 @@
+-- AIMS_PIPELINEEVENT-- 
+
+SELECT 
+    e.id as "id",
+    e.description as "description",
+    e.follow_up as "follow_up",
+    e.notify as "notify",
+    e.date as "date",
+    e.status as "status",
+    e.completion_date as "completion_date",
+    e.assessment_group as "assessment_group",
+    e.pipeline_id as "pipeline_id",
+    e.action_tracking as "action_tracking",
+    e.owner_id as "owner_id",
+    e.location as "location",    
+    e.coordinates as "coordinates",  
+    ct.label AS contractor.label, 
+    ev.label AS "event.label",
+    sj.label AS "subject.label",
+    ty.label AS "type_event.label",
+    cp.name_tag AS "Component",
+    CONCAT(extev.risk_priority, extev.risk_consequence) AS "Risk_matrix_extev",
+    CONCAT(intev.risk_priority, intev.risk_consequence) AS "Risk_matrix_intev",
+
+    DATEADD(month, 12, e.date) AS "Next_time_event",
+    
+    CASE 
+        WHEN e.completion_date IS NULL 
+        THEN "Next_time_event" 
+        ELSE e.completion_date 
+    END AS "Fut_Inspection",
+    
+    COALESCE("Risk_matrix_extev", '&') AS "CopiarRisk_Ext",
+    COALESCE("Risk_matrix_intev", '&') AS "CopiarRisk_Int",
+    
+
+    
+
+FROM
+    aims_pipelineevent e
+LEFT JOIN 
+    aims_list ct ON e.contractor_id = ct.id
+LEFT JOIN 
+    aims_list ev ON e.event_id = ev.id
+LEFT JOIN 
+    aims_list sj ON e.subject_id = sj.id
+LEFT JOIN 
+    aims_list ty ON e.type_id = ty.id
+LEFT JOIN
+    aims_pipelinecomponent cp ON e.component_id = cp.id
+LEFT JOIN 
+    aims_pipelineinternalriskassessment intas ON intas.event_id = e.id
+LEFT JOIN
+    aims_pipelineinternalriskevaluation intev ON intev.risk_assessment_id = intas.id
+LEFT JOIN 
+    aims_pipelineexternalriskassessment extas ON extas.event_id = e.id
+LEFT JOIN
+    aims_pipelineexternalriskevaluation extev ON extev.risk_assessment_id = extas.id
+    
+-- WHERE e.id = 449;
+    
+

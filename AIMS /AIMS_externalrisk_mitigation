@@ -1,0 +1,15 @@
+-- AIMS_EXTERNALRISK_MITIGATION --
+
+
+SELECT 
+    m.id as "id",
+    m.pipelineexternalriskevaluation_id AS "Extriskevaluation_id",
+    m.list_id as "list_id",
+    l.label AS "aims_list.label"
+    --Acti--
+FROM 
+    aims_pipelineexternalriskevaluation_mitigation m
+LEFT JOIN 
+    aims_list l ON m.list_id = l.id
+ORDER BY 
+    m.pipelineexternalriskevaluation_id;

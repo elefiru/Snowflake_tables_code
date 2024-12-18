@@ -1,0 +1,18 @@
+-- AIMS_PIPELINEFLUIDPROPERTIES --
+
+SELECT
+    f.id as "id",
+    f.date as "date",
+    f.field as "field",
+    f.operating_pressure as "operating_pressure",
+    f.liquid_flowrate as "liquid_flowrate",
+    f.gas_flowrate as "gas_flowrate",
+    f.bsw as "bsw",
+    f.ph as "ph",
+    f.co2 as "co2",
+    f.h2s as "h2s",
+    f.pipeline_id as "pipeline_id",
+    f.type_fluid_id as "type_fluid_id",
+    f.liquid_flowrate * (100 - f.bsw) / 100 AS "oil rate - bopd"
+FROM
+    aims_pipelinefluidproperties f

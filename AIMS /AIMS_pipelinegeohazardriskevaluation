@@ -1,0 +1,21 @@
+-- AIMS_PIPELINEGEOHAZARDRISKEVALUATION --
+
+SELECT
+    g.id as"id",
+    g.active as "active",
+    g.risk_priority as "risk_priority",
+    g.risk_consequence "risk_consequence",
+    g.equipment_status "equipment_status",
+    g.summary "summary",
+    g.interval "interval",
+    g.due_date "due_date",
+    g.dammage_id "dammage_id",
+    g.risk_assessment_id "risk_assessment_id",
+    g.section_id as "section_id"
+FROM
+    aims_pipelinegeohazardriskevaluation g
+LEFT JOIN
+    aims_list l ON g.dammage_id = l.id
+LEFT JOIN
+    aims_pipelinegeohazardsection s ON g.section_id = s.id;
+    

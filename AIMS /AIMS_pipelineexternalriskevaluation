@@ -1,0 +1,56 @@
+-- AIMS_PIPELINEEXTERNALRISKEVALUATION --
+-- syntax error on line 25: unexpected 'm'." (because 'Acti' does not exist as a column in aims_pipelineexternalriskevaluation_mitigation)
+
+SELECT
+    e.id as "id",
+    e.active as "active",
+    e.risk_priority as "risk_priority",
+    e.risk_consequence  "risk_consequence",
+    e.equipment_status as "equipment_status",
+    e.summary as "summary",
+    e.interval as "interval",
+    e.due_date as "due_date",
+    e.risk_assessment_id as "risk_assessment_id",
+    a.event_id as "event_id",
+    CONCAT(e.risk_priority, e.risk_consequence) AS "Risk matrix",
+    --COUNT(*) AS ExRisk,
+    CASE 
+        WHEN CONCAT(e.risk_priority, e.risk_consequence) IN ('E5', 'E4', 'E3', 'E2', 'D5', 'D4', 'D3', 'C5') THEN 'Low Risk'
+        WHEN CONCAT(e.risk_priority, e.risk_consequence) IN ('C4', 'C3', 'E1', 'D1', 'D2', 'B4', 'B5') THEN 'Medium Risk'
+        WHEN CONCAT(e.risk_priority, e.risk_consequence) IN ('C1', 'C2', 'B2', 'B3', 'A4') THEN 'High Risk'
+        WHEN CONCAT(e.risk_priority, e.risk_consequence) IN ('B1', 'A1', 'A2', 'A3') THEN 'Very High Risk'
+        ELSE NULL
+    END AS "Risk Tag ER",
+
+    
+    
+    (
+        SELECT 
+            TRIM(
+                LISTAGG(L.label, ' ') WITHIN GROUP (ORDER BY L.label)
+            )
+        FROM 
+            aims_pipelineexternalriskevaluation_mitigation M
+        LEFT JOIN 
+            aims_list L ON M.list_id = L.id
+        WHERE 
+            M.pipelineexternalriskevaluation_id = e.id
+    ) AS "Mitigation_Action_Ext"
+    
+
+
+FROM
+    aims_pipelineexternalriskevaluation e
+LEFT JOIN
+    aims_list l ON l.id = e.dammage_id
+ LEFT JOIN 
+    aims_pipelineexternalriskevaluation_mitigation m ON m.pipelineexternalriskevaluation_id = e.id
+LEFT JOIN
+    aims_pipelineexternalriskassessment a ON a.id = e.risk_assessment_id
+LEFT JOIN
+    aims_pipelineevent v ON v.id = a.event_id
+
+
+GROUP BY
+    e.id, e.active, e.risk_priority, e.risk_consequence, e.equipment_status, e.summary, e.interval, e.due_date, e.risk_assessment_id, l.label, a.event_id;
+

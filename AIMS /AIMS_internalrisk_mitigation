@@ -1,0 +1,15 @@
+-- AIMS_INTERNALRISK_MITIGATION --
+
+SELECT 
+    m.id AS "id",
+    m.pipelineinternalriskevaluation_id AS "pipelineinternalriskevaluation_id",
+    l.label AS "aims_list.label",
+    m.list_id AS "list_id"
+    --Int_Action'''
+
+FROM 
+    aims_pipelineinternalriskevaluation_mitigation m
+LEFT JOIN 
+    aims_list l ON m.list_id = l.id
+ORDER BY 
+    m.pipelineinternalriskevaluation_id;

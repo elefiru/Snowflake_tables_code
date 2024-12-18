@@ -1,0 +1,48 @@
+-- OpsRef_permit_terms --
+
+
+WITH dbo_permit_terms AS (
+    SELECT *
+    FROM permit_terms
+    WHERE deletedAt IS NULL
+),
+
+-- Remove unnecessary columns
+Filtered_Rows AS (
+    SELECT 
+        id,
+        id_permit,
+        start_date,
+        end_date,
+        net_working_int_oil,
+        net_working_int_gas,
+        capex_paying_int,
+        opex_paying_int,
+        operator,
+        operated_by_perenco,
+        last_update,
+        id_user_update
+    FROM permit_terms
+),
+
+-- Modify column types
+Type_modifie AS (
+    SELECT 
+        CAST(id AS BIGINT) AS "id",
+        CAST(id_permit AS BIGINT) AS "id_permit",
+        CAST(start_date AS DATE) AS "start_date",
+        CAST(end_date AS DATE) AS "end_date",
+        CAST(net_working_int_oil AS FLOAT) AS "net_working_int_oil",
+        CAST(net_working_int_gas AS FLOAT) AS "net_working_int_gas",
+        CAST(capex_paying_int AS FLOAT) AS "capex_paying_int",
+        CAST(opex_paying_int AS FLOAT) AS "opex_paying_int",
+        CAST(operator AS STRING) AS "operator",
+        CAST(operated_by_perenco AS BOOLEAN) AS "operated_by_perenco",
+        CAST(last_update AS TIMESTAMP) AS "last_update",
+        CAST(id_user_update AS STRING) AS "id_user_update"
+    FROM Filtered_Rows
+)
+
+-- Final select statement
+SELECT *
+FROM Type_modifie;

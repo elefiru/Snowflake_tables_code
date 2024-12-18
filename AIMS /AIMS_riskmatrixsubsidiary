@@ -1,0 +1,12 @@
+-- AIMS_RISKMATRIXSUBSIDIARY --
+   
+   SELECT
+        s.id as "id",
+        s.subsidiary as "subsidiary",
+        r.rating AS "aims_riskmatrix.rating",
+        r.probability AS "aims_riskmatrix.probability",
+        CONCAT("aims_riskmatrix.probability", "aims_riskmatrix.rating") AS "Risk Matrix"
+    FROM
+        aims_riskmatrixsubsidiary s
+    LEFT JOIN    
+        aims_riskmatrix r ON s.id=r.risk_matrix_subsidiary_id;

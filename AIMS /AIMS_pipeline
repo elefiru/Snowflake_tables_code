@@ -1,0 +1,128 @@
+-- AIMS_PIPELINE --
+
+SELECT 
+    p.ID as "id",
+    p.COF as "cof",
+    p.POF as "pof",
+    p.MAOP as "maop",
+    p.NAME as "name",
+    p.SITE as "site",
+    p.LENGTH as "length",
+    p.COUNTRY as "country",
+    p.PIGGABLE as "piggable",
+    p.PRIORITY as "priority",
+    p.CP_SYSTEM as "cp_system",
+    p.IN_SERVICE as "in_service",
+    p.STATION_TO as "station_to",
+    p.DESIGN_TEMP as "design_temp",
+    p.ENVIRONMENT as "environment",
+    p.EXT_COATING as "ext_coating",
+    p.INT_COATING as "int_coating",
+    p.DESIGN_PRESS as "design_press",
+    p.EQUIP_STATUS as "equip_status",
+    p.INSTALLATION as "installation",
+    p.OPERATE_TEMP as "operate_temp",
+    p.OVERALL_RISK as "overall_risk",
+    p.STATION_FROM as "station_from",
+    p.OPERATE_PRESS as "operate_press",
+    p.REMAINING_LIFE as "remaining_life",
+    p.CORROSION_MONIT as "corrosion_monit",
+    p.TYPE_INSPECTION as "type_inspection",
+    p.ASSEMBLY_PROCESS as "assembly_process",
+    p.HYDRO_TEST_PRESS as "hydro_test_press",
+    p.INSTALLATION_DATE as "installation_date",
+    p.PIPELINE_CATEGORY as "pipeline_category",
+    p.INSPECTION_FREQUENCY as "inspection_frequency",
+    p.LAST_INSPECTION_DATE as "last_inspection_date",
+    p.NEXT_INSPECTION_DATE as "next_inspection_date",
+    wt.label AS "wall_thickness.label", 
+    mt.label AS "material_type.label",
+    mg.label AS "material_grade.label",
+    fg.label AS "flange_class.label",
+    di.label AS "diameter.label",
+    ds.label AS "design_code.label",
+    aset.label AS "asset_type.label",
+    ps.label AS "process_fluid.label",
+    tl.label AS "type_of_line.label",
+    
+    CASE 
+        WHEN p.overall_risk IN ('E5', 'E4', 'E3', 'E2', 'D5', 'D4', 'D3', 'C5') THEN 'Low'
+        WHEN p.overall_risk IN ('C4', 'C3', 'E1', 'D1', 'D2', 'B4', 'B5') THEN 'Medium'
+        WHEN p.overall_risk IN ('C1', 'C2', 'B2', 'B3', 'A4') THEN 'High'
+        WHEN p.overall_risk IN ('B1', 'A1', 'A2', 'A3') THEN 'Very High'
+        ELSE NULL
+    END AS "Risk Tag",
+
+    DATEDIFF(YEAR, p.installation_date, GETDATE()) AS "Pipeline age",
+
+    CASE 
+        WHEN DATEDIFF(YEAR, p.installation_date, GETDATE()) < 10 THEN 10
+        WHEN DATEDIFF(YEAR, p.installation_date, GETDATE()) < 20 THEN 20
+        WHEN DATEDIFF(YEAR, p.installation_date, GETDATE()) < 30 THEN 30
+        WHEN DATEDIFF(YEAR, p.installation_date, GETDATE()) < 40 THEN 40
+        WHEN DATEDIFF(YEAR, p.installation_date, GETDATE()) < 50 THEN 50
+        WHEN DATEDIFF(YEAR, p.installation_date, GETDATE()) < 60 THEN 60
+        ELSE 0
+    END AS "Age classification",
+
+    CASE 
+        WHEN p.overall_risk IN ('A1', 'A2', 'A3', 'B1') THEN 1
+        WHEN p.overall_risk IN ('A4', 'B3', 'B2', 'C2', 'C1') THEN 2
+        WHEN p.overall_risk IN ('A5', 'B5', 'B4', 'C4', 'C3', 'D2', 'D1', 'E1') THEN 3
+        ELSE 0
+    END AS "Risk color scale",
+
+    CASE 
+        WHEN p.in_service = 0 THEN 'No'
+        ELSE 'Yes'
+    END AS Service,
+
+    --COUNT(*) OVER() AS "Measure Risk",
+
+    'http://intranet-industriel.perenco.net/integrity_followup/pipelines/' || p.id AS URL,
+
+    CASE
+        WHEN p.ext_coating = 'FALSE' THEN 'No'
+        ELSE 'Yes'
+    END AS "Ext_Coat_Installed",
+
+    CASE
+        WHEN p.int_coating = 0 THEN 'No'
+        ELSE 'Yes'
+    END AS "Int_Coat_Inst",
+
+    CASE
+        WHEN p.cp_system = 0 THEN 'No'
+        ELSE 'Yes'
+    END AS "CP_Inst",
+
+    CASE
+        WHEN p.corrosion_monit = 0 THEN 'No'
+        ELSE 'Yes'
+    END AS "Corr_Monitoring",
+
+    CASE
+        WHEN p.piggable = 0 THEN 'No'
+        ELSE 'Yes'
+    END AS "Piggable_Line"
+
+FROM 
+    aims_pipeline p
+LEFT JOIN 
+    aims_list wt ON p.wall_thickness_id = wt.id
+LEFT JOIN 
+    aims_list mt ON p.material_type_id = mt.id
+LEFT JOIN 
+    aims_list mg ON p.material_grade_id = mg.id
+LEFT JOIN 
+    aims_list fg ON p.flange_class_id = fg.id
+LEFT JOIN 
+    aims_list di ON p.diameter_id = di.id
+LEFT JOIN 
+    aims_list ds ON p.design_code_id = ds.id
+LEFT JOIN 
+    aims_list aset ON p.asset_type_id = aset.id
+LEFT JOIN 
+    aims_list ps ON p.process_fluid_id = ps.id
+LEFT JOIN 
+    aims_list tl ON p.type_of_line_id = tl.id;

@@ -1,0 +1,90 @@
+-- AIMS_PIPELINEFLOWPIGGINGASSESSMENT --
+
+SELECT 
+    p.id as "id",
+    p.launch_date as "launch_date",
+    p.receive_date as "receive_date",
+    p.frequency as "frequency",
+    p.next_proposed_date as "next_proposed_date",
+    p.observation as "observation",
+    p.deposit_sample as "deposit_sample",
+    p.pipeline_id as "pipeline_id",
+    p.quantity_deposit as"quantity_deposit",
+    s.label AS "pig_status.label",
+    t.label AS "pig_type.label",
+    c.label AS "pig_condition.label",
+    l.label AS deposit_type,
+    
+    CASE 
+        WHEN p.launch_date = (
+            SELECT MAX(sub.launch_date)
+            FROM aims_pipelineflowpiggingassessment AS sub
+            WHERE sub.pipeline_id = p.pipeline_id
+                            ) THEN TRUE
+        ELSE FALSE
+    END AS "Last pigging flag",
+    
+    CASE 
+        WHEN "Last pigging flag" = TRUE THEN
+            CASE 
+                WHEN DATEDIFF(DAY, p.launch_date, GETDATE()) > 2 * p.frequency THEN 2
+                WHEN DATEDIFF(DAY, p.launch_date, GETDATE()) > p.frequency THEN 1
+                ELSE 0
+            END
+        ELSE 4
+    END AS "Status piggin delay",
+    
+    p.pig_condition_id as "p.pig_condition_id",
+    
+    CASE 
+        WHEN p.receive_date IS NULL THEN NULL
+        ELSE DATEDIFF(DAY, p.launch_date, p.receive_date)
+    END AS "Run_duration",
+  
+    CASE 
+        WHEN deposit_type LIKE '%scale%' THEN TRUE
+        ELSE FALSE
+    END AS "is_scale",
+
+    CASE 
+        WHEN deposit_type LIKE '%wax%' THEN TRUE
+        ELSE FALSE
+    END AS "is_wax",
+
+    CASE 
+        WHEN deposit_type LIKE '%sand%' THEN TRUE
+        ELSE FALSE
+    END AS "is_sand",
+
+    CASE 
+        WHEN deposit_type LIKE '%condensate%' THEN TRUE
+        ELSE FALSE
+    END AS "is_condensate",
+
+    DATEDIFF(DAY,
+            (SELECT MAX(receive_date) 
+            FROM aims_pipelineflowpiggingassessment AS sub
+            WHERE sub.receive_date < p.launch_date
+            AND sub.pipeline_id = p.pipeline_id),
+            p.launch_date)
+        AS "day_since_last_pig",
+    
+    CASE 
+        WHEN p.next_proposed_date IS NULL THEN 
+            DATEADD(DAY, p.frequency, p.launch_date)
+        ELSE 
+            p.next_proposed_date
+    END AS "Next_launch",
+    
+FROM 
+    aims_pipelineflowpiggingassessment p
+LEFT JOIN 
+    aims_pipelineflowpiggingassessment_type_deposit d ON p.id = d.pipelineflowpiggingassessment_id
+LEFT JOIN 
+    aims_list s ON p.status_id = s.id
+LEFT JOIN 
+    aims_list t ON p.pig_type_id = t.id
+LEFT JOIN 
+    aims_list c ON p.pig_condition_id = c.id
+LEFT JOIN 
+    aims_list l ON d.list_id = l.id;

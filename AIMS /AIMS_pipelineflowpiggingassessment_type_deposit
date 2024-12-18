@@ -1,0 +1,10 @@
+-- AIMS_PIPELINEFLOWPIGGINGASSESSMENT_TYPE_DEPOSIT --
+
+SELECT 
+    d.id as "id",
+    d.pipelineflowpiggingassessment_id as "pipelineflowpiggingassessment_id",
+    l.label AS "deposit_type"
+FROM 
+    aims_pipelineflowpiggingassessment_type_deposit d
+LEFT JOIN 
+    aims_list l ON d.list_id = l.id

@@ -1,0 +1,25 @@
+-- AIMS_PIPELINEFLOWCHEMICALTREATMENT --
+
+SELECT
+    c.id as "id",
+    c.date_commenced as "date_commenced",
+    c.status as "status",
+    c.type_app as "type_app",
+    c.rate as "rate",
+    c.event_id as "event_id",
+    c.pipeline_id as "pipeline_id",
+    a.label AS "action.label",
+    e.label AS "effectiveness",
+    m.label AS "manufacturer",
+    t.label AS "treatment_type"
+FROM
+    aims_pipelineflowchemicaltreatment c
+LEFT JOIN
+    aims_list a ON c.action_id = a.id
+LEFT JOIN
+    aims_list e ON c.effectiveness_id = e.id
+LEFT JOIN
+    aims_list m ON c.manufacturer_id = m.id    
+LEFT JOIN
+    aims_list t ON c.treatment_type_id = t.id;
+
